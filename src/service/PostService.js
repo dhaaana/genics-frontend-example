@@ -1,12 +1,13 @@
 // services/PostService.js
 import { BASE_URL } from "@/constant/api";
 
-export const createPost = async (post) => {
+export const createPost = async (post, token) => {
   try {
     const response = await fetch(`${BASE_URL}/posts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(post),
     });
@@ -18,7 +19,7 @@ export const createPost = async (post) => {
 
     return response.json();
   } catch (error) {
-    throw new Error("Failed to create a new post.");
+    throw new Error(error.message);
   }
 };
 

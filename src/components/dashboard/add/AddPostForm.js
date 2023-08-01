@@ -3,6 +3,7 @@ import { createPost } from "@/service/PostService";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getToken } from "@/utils/token";
 
 const AddPostForm = () => {
   const router = useRouter();
@@ -10,10 +11,10 @@ const AddPostForm = () => {
   const [body, setBody] = useState("");
   const [errors, setErrors] = useState({ title: "", body: "", form: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const bearerToken = getToken();
 
   const validateInput = (input, rule) => {
-    // Validate input based on rule
-    // ... (similar to validation in RegisterForm)
+    // TODO: Validate input based on rule
   };
 
   const handleSubmit = async (e) => {
@@ -34,14 +35,14 @@ const AddPostForm = () => {
           userId: 1,
         };
 
-        await createPost(newPost);
+        await createPost(newPost, bearerToken);
         // Clear the form after successful submission
         setTitle("");
         setBody("");
         setIsLoading(false);
         router.push("/");
       } catch (error) {
-        setErrors({ ...errors, form: "Failed to create a new post." });
+        setErrors({ ...errors, form: error.message });
         setIsLoading(false);
       }
     }

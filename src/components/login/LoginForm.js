@@ -71,8 +71,8 @@ const LoginForm = () => {
 
       if (response.ok) {
         // Save the token to cookies
-        const errorData = await response.json(); // Parse the response
-        const token = errorData.data.token;
+        const userData = await response.json(); // Parse the response
+        const token = userData.data.token;
         setToken(token);
         router.push("/dashboard");
       } else {

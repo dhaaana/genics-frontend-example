@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -19,18 +19,18 @@ const PostList = () => {
         } else {
           setError("Error fetching posts");
         }
-        setLoading(false);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
         setError("Error fetching posts");
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <p className="text-2xl font-bold">Loading...</p>

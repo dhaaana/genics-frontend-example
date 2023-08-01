@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { BASE_URL } from "@/constant/api";
 import { getToken } from "@/utils/token";
 import { useRouter } from "next/navigation";
@@ -44,10 +42,10 @@ const Profile = () => {
   return (
     <div className="container">
       {isLoading ? (
-        <p className="text-2xl font-bold">Loading...</p>
+        <p className="text-2xl font-semibold">Loading...</p>
       ) : profileData ? (
         <div>
-          <h2 className="text-3xl font-bold mb-1">Nama</h2>
+          <h2 className="text-3xl font-bold mb-1">{profileData.name}</h2>
           <p className="text-gray-600">{profileData.email}</p>
         </div>
       ) : null}

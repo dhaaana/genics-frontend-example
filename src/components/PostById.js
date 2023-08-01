@@ -50,6 +50,9 @@ const PostById = ({ postId }) => {
       ) : post ? (
         <div>
           <h2 className="text-3xl font-bold mb-2">{post.title}</h2>
+          <p className="text-gray-600 mb-2 font-semibold">
+            By {post.author.name}
+          </p>
           <p className="text-gray-600">{post.body}</p>
         </div>
       ) : null}

@@ -1,6 +1,7 @@
 import BackButton from "@/components/button/BackButton";
 import LogoutButton from "@/components/button/LogoutButton";
 import Profile from "@/components/dashboard/Profile";
+import UserPostList from "@/components/dashboard/UserPostList";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -19,8 +20,10 @@ export default function Dashboard() {
           <LogoutButton />
         </div>
       </div>
-      <h1 className="text-4xl font-bold mb-2">Profile</h1>
+      <h1 className="text-4xl font-bold mb-4">Profile</h1>
       <Profile />
+      <h1 className="text-4xl font-bold my-4">Your Posts</h1>
+      <UserPostList />
     </main>
   );
 }

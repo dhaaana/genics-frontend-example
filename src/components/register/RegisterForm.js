@@ -3,12 +3,16 @@ import { BASE_URL } from "@/constant/api";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -17,6 +21,11 @@ const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const validateInput = (input, rule, realPassword = "") => {
+    if (rule === "name") {
+      if (!input.trim()) {
+        return "Name cannot be empty";
+      }
+    }
     if (rule === "email") {
       if (!input.trim()) {
         return "Email cannot be empty";
@@ -48,6 +57,7 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const nameError = validateInput(name, "name");
     const emailError = validateInput(email, "email");
     const passwordError = validateInput(password, "password");
     const confirmPasswordError = validateInput(
@@ -56,9 +66,10 @@ const RegisterForm = () => {
       password
     );
 
-    if (emailError || passwordError || confirmPasswordError) {
+    if (nameError || emailError || passwordError || confirmPasswordError) {
       setErrors({
         ...errors,
+        name: nameError,
         email: emailError,
         password: passwordError,
         confirmPassword: confirmPasswordError,
@@ -66,6 +77,7 @@ const RegisterForm = () => {
       });
     } else {
       setErrors({
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -84,15 +96,16 @@ const RegisterForm = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       if (response.ok) {
-        // ... (perform the actual registration process here if needed)
+        router.push("/login");
       } else {
         const errorData = await response.json();
         const errorMessage = errorData.message;
         setErrors({
+          name: "",
           email: "",
           password: "",
           confirmPassword: "",
@@ -101,6 +114,7 @@ const RegisterForm = () => {
       }
     } catch (error) {
       setErrors({
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -113,6 +127,23 @@ const RegisterForm = () => {
     <div className="container mx-auto w-full sm:w-1/3">
       <h2 className="text-3xl font-bold mb-4">Register</h2>
       <form onSubmit={handleSubmit} noValidate>
+        <div className="mb-4">
+          <label htmlFor="name" className="block font-medium text-gray-700">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            className={`w-full px-3 py-2 mt-1 text-gray-700 border-2 rounded-lg focus:outline-none ${
+              errors.name ? "border-red-500" : "border-gray-300"
+            }`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+        </div>
+
         <div className="mb-4">
           <label htmlFor="email" className="block font-medium text-gray-700">
             Email
