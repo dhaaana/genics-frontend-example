@@ -3,18 +3,20 @@ import { BASE_URL } from "@/constant/api";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
-import { setToken } from "@/utils/token";
-import { useRouter } from "next/navigation";
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ email: "", password: "", form: "" });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    form: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const validateInput = (input, rule) => {
-    // Validate input based on rule
+  const validateInput = (input, rule, realPassword = "") => {
     if (rule === "email") {
       if (!input.trim()) {
         return "Email cannot be empty";
@@ -31,6 +33,14 @@ const LoginForm = () => {
       } else {
         return "";
       }
+    } else if (rule === "confirmPassword") {
+      if (!input.trim()) {
+        return "Confirm password cannot be empty";
+      } else if (input !== realPassword) {
+        return "Passwords do not match";
+      } else {
+        return "";
+      }
     } else {
       return "";
     }
@@ -40,28 +50,36 @@ const LoginForm = () => {
     e.preventDefault();
     const emailError = validateInput(email, "email");
     const passwordError = validateInput(password, "password");
+    const confirmPasswordError = validateInput(
+      confirmPassword,
+      "confirmPassword",
+      password
+    );
 
-    // If there is any error, setErrors will be called
-    if (emailError || passwordError) {
+    if (emailError || passwordError || confirmPasswordError) {
       setErrors({
         ...errors,
         email: emailError,
         password: passwordError,
+        confirmPassword: confirmPasswordError,
         form: "",
       });
     } else {
-      setErrors({ email: "", password: "", form: "" });
-      // Start loading
+      setErrors({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        form: "",
+      });
       setIsLoading(true);
-      await handleLogin();
-      // End loading
+      await handleRegister();
       setIsLoading(false);
     }
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/login`, {
+      const response = await fetch(`${BASE_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,17 +88,14 @@ const LoginForm = () => {
       });
 
       if (response.ok) {
-        // Save the token to cookies
-        const errorData = await response.json(); // Parse the response
-        const token = errorData.data.token;
-        setToken(token);
-        router.push("/dashboard");
+        // ... (perform the actual registration process here if needed)
       } else {
-        const errorData = await response.json(); // Parse the error response
+        const errorData = await response.json();
         const errorMessage = errorData.message;
         setErrors({
           email: "",
           password: "",
+          confirmPassword: "",
           form: errorMessage,
         });
       }
@@ -88,14 +103,15 @@ const LoginForm = () => {
       setErrors({
         email: "",
         password: "",
-        form: "Login failed due to server error. Please try again.",
+        confirmPassword: "",
+        form: "Registration failed due to server error. Please try again.",
       });
     }
   };
 
   return (
-    <div className="container mx-auto w-11/12 sm:w-1/3">
-      <h2 className="text-3xl font-bold mb-4">Login</h2>
+    <div className="container mx-auto w-full sm:w-1/3">
+      <h2 className="text-3xl font-bold mb-4">Register</h2>
       <form onSubmit={handleSubmit} noValidate>
         <div className="mb-4">
           <label htmlFor="email" className="block font-medium text-gray-700">
@@ -133,6 +149,27 @@ const LoginForm = () => {
             <p className="text-red-500 text-sm">{errors.password}</p>
           )}
         </div>
+        <div className="mb-4">
+          <label
+            htmlFor="confirmPassword"
+            className="block font-medium text-gray-700"
+          >
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            className={`w-full px-3 py-2 mt-1 text-gray-700 border-2 rounded-lg focus:outline-none ${
+              errors.confirmPassword ? "border-red-500" : "border-gray-300"
+            }`}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+          )}
+        </div>
         {errors.form && (
           <p className="text-red-500 text-sm mb-4">{errors.form}</p>
         )}
@@ -141,12 +178,12 @@ const LoginForm = () => {
           className="py-3 w-full text-white flex justify-center bg-black rounded hover:bg-gray-800 focus:outline-none"
           disabled={isLoading}
         >
-          {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
+          {isLoading ? <Loader2 className="animate-spin" /> : "Register"}
         </button>
         <p className="text-center mt-4 sm:text-md text-sm">
-          Doesn't have an account?{" "}
-          <Link href="/register" className="font-semibold hover:underline">
-            Register
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold hover:underline">
+            Login
           </Link>
         </p>
       </form>
@@ -154,4 +191,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

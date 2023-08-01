@@ -1,11 +1,13 @@
 import BackButton from "@/components/button/BackButton";
-import LoginForm from "@/components/login/LoginForm";
+import RegisterForm from "@/components/register/RegisterForm";
+import { ArrowLeft, Home } from "lucide-react";
+import Link from "next/link";
 
 export default function Login() {
   return (
     <main className="sm:p-8 p-4">
       <BackButton />
-      <LoginForm />
+      <RegisterForm />
     </main>
   );
 }
